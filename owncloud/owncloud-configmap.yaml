@@ -1,0 +1,19 @@
+---
+apiVersion: v1
+data:
+  HTTP_PORT: "8080"
+  # You must replace this OWNCLOUD_DOMAIN with your own.
+  OWNCLOUD_DOMAIN: "owncloud.example.com"
+  # You must replace this OWNCLOUD_ADMIN_USERNAME with your own.
+  OWNCLOUD_ADMIN_USERNAME: "myowncloudadmin"
+  OWNCLOUD_DB_TYPE: pgsql
+  OWNCLOUD_DB_NAME: owncloud
+  OWNCLOUD_DB_HOST: owncloud-postgres
+  OWNCLOUD_REDIS_ENABLED: "false"
+  OWNCLOUD_SKIP_CHOWN: "false"
+  OWNCLOUD_BACKGROUND_MODE: "webcron"
+kind: ConfigMap
+metadata:
+  labels:
+    app: owncloud
+  name: owncloud-config

@@ -1,0 +1,80 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: owncloud-data-pvc
+  namespace: owncloud
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: local-path
+  resources:
+    requests:
+      storage: 30Gi
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+  name: owncloud
+spec:
+  # During installation and upgrade of ownCloud this MUST be set to `1`
+  # If set to something else than `1` during installation or upgrade, you may run into issues.
+  replicas: 1
+  revisionHistoryLimit: 2
+  selector:
+    matchLabels:
+      app: owncloud
+  template:
+    metadata:
+      name: owncloud
+      labels:
+        app: owncloud
+    spec:
+      volumes:
+      - name: owncloud-data
+        persistentVolumeClaim:
+          claimName: owncloud-data-pvc
+      containers:
+      - image: owncloud/server:latest
+        imagePullPolicy: Always
+        name: owncloud
+        envFrom:
+        - secretRef:
+            name: owncloud-config
+        - configMapRef:
+            name: owncloud-config
+        env:
+        - name: OWNCLOUD_DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: owncloud-user.owncloud-postgres.credentials
+              key: username
+        - name: OWNCLOUD_DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: owncloud-user.owncloud-postgres.credentials
+              key: password
+        ports:
+        - containerPort: 8080
+          name: http
+        volumeMounts:
+        - name: owncloud-data
+          mountPath: /mnt/data
+# Only uncomment after the database installation has completed
+#
+#        readinessProbe:
+#          initialDelaySeconds: 10
+#          failureThreshold: 20
+#          timeoutSeconds: 5
+#          exec:
+#            command:
+#            - /usr/bin/healthcheck
+#        livenessProbe:
+#          exec:
+#            command:
+#            - /usr/bin/healthcheck
+#          initialDelaySeconds: 35
+#          timeoutSeconds: 3
+#          successThreshold: 1
+#          failureThreshold: 15

@@ -1,0 +1,16 @@
+# certificate.yaml
+apiVersion: cert-manager.io/v1alpha2
+kind: Certificate
+metadata:
+  name: owncloud-cert
+  namespace: owncloud
+spec:
+  secretName: owncloud-cert
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  # You must replace this commonName with your own.
+  commonName: owncloud.example.com
+  # You must replace this dnsNames with your own.
+  dnsNames:
+    - owncloud.example.com

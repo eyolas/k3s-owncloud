@@ -1,0 +1,20 @@
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    ingress.kubernetes.io/ssl-redirect: "true"
+  name: owncloud
+spec:
+  tls:
+    - secretName: owncloud-cert
+  rules:
+    # You must replace this host with your own.
+  - host: owncloud.example.com
+    http:
+      paths:
+        - path: /
+          backend:
+            serviceName: owncloud-service
+            servicePort: http

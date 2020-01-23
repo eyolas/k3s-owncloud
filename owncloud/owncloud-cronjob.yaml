@@ -1,0 +1,46 @@
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  labels:
+    app: owncloud
+  name: webcron
+spec:
+  concurrencyPolicy: Forbid
+  schedule: "*/14 * * * *"
+  successfulJobsHistoryLimit: 1
+  failedJobsHistoryLimit: 2
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: webcron
+            image: byrnedo/alpine-curl:latest
+            env:
+            - name: HTTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: owncloud-config
+                  key: HTTP_PORT
+            - name: OWNCLOUD_DOMAIN
+              valueFrom:
+                configMapKeyRef:
+                  name: owncloud-config
+                  key: OWNCLOUD_DOMAIN
+            args:
+            - -Ss
+            - --connect-timeout
+            - "5"
+            - --max-time
+            - "60"
+            - --retry
+            - "5"
+            - --retry-delay
+            - "5"
+            - --retry-max-time
+            - "60"
+            - -H
+            - 'Host: $(OWNCLOUD_DOMAIN)'
+            - 'http://owncloud:$(HTTP_PORT)/cron.php'
+          restartPolicy: OnFailure
