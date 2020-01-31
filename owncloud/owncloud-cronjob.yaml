@@ -42,5 +42,5 @@ spec:
             - "60"
             - -H
             - 'Host: $(OWNCLOUD_DOMAIN)'
-            - 'http://owncloud:$(HTTP_PORT)/cron.php'
+            - 'http://owncloud-service:$(HTTP_PORT)/cron.php'
           restartPolicy: OnFailure
