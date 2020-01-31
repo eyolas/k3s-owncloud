@@ -1,6 +1,6 @@
 #!/bin/bash
 
-kubectl apply -f namespace.yml
+kubectl create namespace owncloud
 
 kubectl create -f postgres/configmap.yaml
 kubectl create -f postgres/operator-service-account-rbac.yaml
