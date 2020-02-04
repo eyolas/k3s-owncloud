@@ -8,15 +8,14 @@ kubectl create -f postgres/postgres-operator.yaml
 
 kubectl create -f postgres/postgres.yaml -n owncloud
 
-kubectl create -n owncloud -f owncloud/
-
 kubectl create namespace cert-manager
 
 kubectl apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.12.0/cert-manager.yaml
 
-
 kubectl apply -f le/le-prod.yaml
 
 kubectl apply -f le/certificate.yaml
+
+kubectl create -n owncloud -f owncloud/
 
 kubectl -n owncloud describe certificate owncloud-cert
